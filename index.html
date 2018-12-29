@@ -33,7 +33,8 @@
 		var brickPadding = 10;
 		var brickOffsetTop = 50;
 		var brickOffsetLeft = 55;
-
+		var changeColor = false;
+		var color = "#ff77aa";
 		var bricks = [];
 		for(var c=0; c<brickColumnCount; c++) {
 			bricks[c] = [];
@@ -71,9 +72,10 @@
             if(b.status == 1) {
             if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
                 dy = -dy;
-                b.status = 0;
+                changeColor = true;
+                b.status = 0;              
               }
-            	}
+            }
         	}
     		}
 			}
@@ -99,15 +101,15 @@
 		function drawBall() {
 			ctx.beginPath();
 			ctx.arc(x,y, ballRadius,0, Math.PI*2);
-			ctx.fillStyle = "#0095DD";
-			ctx.fill();
+			ctx.fillStyle = color;
+			ctx.fill();	
 			ctx.closePath();
 		}
 
 		function drawPaddle() {
 			ctx.beginPath();
 			ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
-			ctx.fillStyle = "#0095DD";
+			ctx.fillStyle = "#FFFFFF";
 			ctx.fill();
 			ctx.closePath();
 		}
@@ -118,8 +120,6 @@
 			drawBall();
 			drawPaddle();
 			collisionDetection();
-			//x += dx;
-			//y += dy;
 
 			if(y + dy < ballRadius) {
 				dy = -dy -1; // speed increases when ball hits paddle
@@ -128,7 +128,6 @@
 			else if(y + dy > canvas.height - ballRadius) {
 					if(x > paddleX && x < paddleX + paddleWidth) {
 						dy = -dy;
-
 					}
 					else {
 						alert("Game Over");
@@ -138,6 +137,12 @@
 
 			if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
 				dx = -dx;
+				changeColor = true;
+			}
+
+			if(changeColor) {
+			 	color = '#' + (Math.random().toString(16) + "000000").substring(2,8);
+			 	changeColor = false;
 			}
 
 			if(rightPressed && paddleX < canvas.width - paddleWidth) {
