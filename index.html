@@ -39,6 +39,10 @@
 		var score = 0;
 		var lives = 3;
 		var highScore = 0;
+		var glow = false;
+		var blur = 0;
+		var glowDuration = 7;
+
 
 
 		for(var c=0; c<brickColumnCount; c++) {
@@ -141,9 +145,20 @@
 		function drawBall() {
 			ctx.beginPath();
 			ctx.arc(x,y, ballRadius,0, Math.PI*2);
-			ctx.fillStyle = color;
+			ctx.fillStyle = color;		
+			if(glow) {
+				glowDuration--;
+				ctx.shadowColor = "yellow";
+				ctx.shadowBlur = 15;
+				if(glowDuration <= 0) {
+					glow = false;
+					glowDuration = 7;
+				}
+			}		
 			ctx.fill();	
 			ctx.closePath();
+			ctx.shadowBlur = 0;
+
 		}
 
 		function drawPaddle() {
@@ -156,8 +171,8 @@
 
 		function draw() {
 			ctx.clearRect(0,0, canvas.width, canvas.height);
+			drawBall();			
 			drawBricks();
-			drawBall();
 			drawPaddle();
 			drawScore();
 			drawLives();
@@ -179,6 +194,7 @@
 							document.location.reload();
 						}
 						else {
+							glow = false;
 							x = canvas.width/2;
 							y = canvas.height-30;
 							dx = -5;
@@ -189,11 +205,12 @@
 						
 					}
 				}
-
+			
 			if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
 				dx = -dx;
-				//changeColor = true; // wall collision color change
+				glow = true; // wall collision glow
 			}
+
 
 			if(changeColor) {
 			 	color = '#' + (Math.random().toString(16) + "000000").substring(2,8);
